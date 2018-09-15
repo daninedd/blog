@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
-class TasksController extends Controller
+class HomeController extends BaseController
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        var_dump($request->all());exit;
+        return 1;
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -47,7 +50,6 @@ class TasksController extends Controller
     public function show($id)
     {
         //
-        return view('tasks.show')->with("id",$id);
     }
 
     /**

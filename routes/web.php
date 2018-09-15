@@ -11,13 +11,22 @@
 |
 */
 
+//Route::group(["prefix" => "api", "namespace" => "Api"], function(){
+//    Route::resource('dogs', 'DogsController');
+//});
+
+//Route::get('/login',['as'=>'login','uses'=>'ApiController@index']);
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('tasks/show/{id}', 'TasksController@show');
+//Auth::routes();
 
 Route::post('form',function(\Illuminate\Http\Request $request){
 
 });
 
+
+//Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/login', 'HomeController@create')->name('login');
