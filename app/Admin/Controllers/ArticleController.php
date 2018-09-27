@@ -14,6 +14,7 @@ use Encore\Admin\Controllers\ModelForm;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\MessageBag;
 
 class ArticleController extends Controller
 {
@@ -114,7 +115,7 @@ class ArticleController extends Controller
             $form->tags('tags', '标签');
             $form->radio('private', '私有')->options(['0' => '私有', '1'=> '公开'])->default('0');
             $form->radio('stat', '草稿')->options(['0' => '保存为草稿', '1'=> '发布'])->default('0');
-            $form->hidden('user_id',$user_id);
+            $form->hidden('user_id',time())->rules('required')->default(time());
         });
     }
 
@@ -122,12 +123,27 @@ class ArticleController extends Controller
     /**
      * insert an article
     */
-//    public function store(){
-//
-//        $data = Input::all();
-//        $model = new Article();
-//        $model->fill($data)->save($data);
-//        echo 1;exit;
-//    }
+    public function store(Request $request){
+
+
+        $data = Request::all();
+        $rules = [
+            'first_title' => 'required|string|max:30',
+            'second_title' => 'required|max:100',
+            'description' => 'required',
+            'img' => 'required',
+            'categories_id' => 'required|array|string',
+            'private' => 'in:0,1',
+            'stat' => 'in:0,1',
+            'user_id' => 'required|integer',
+        ];
+        $validator = \Validator::make($data, $rules);
+        if($validator->fails()){
+            $messageBag = new MessageBag();
+            $messageBag = $messageBag->merge($validator->messages());
+            return back()->withInput()->withErrors($messageBag);
+        }
+
+    }
 
 }

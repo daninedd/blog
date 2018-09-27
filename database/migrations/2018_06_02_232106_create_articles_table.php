@@ -23,7 +23,6 @@ class CreateArticlesTable extends Migration
             $table->longtext('body')->comment("文章类容");
             $table->string('tags', 255)->comment("文章标签");
             $table->boolean('private')->comment("文章类容");
-            $table->unsignedInteger('categories_id')->comment("分类id");
             $table->tinyInteger('stat')->comment("0:草稿,1:发布");
             $table->unsignedInteger('click_times')->comment("点击次数");
             $table->timestamp('publish_time')->nullable()->comment("发布时间");
