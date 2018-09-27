@@ -1,0 +1,23 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="styles/simditor.css" />
+
+    <script type="text/javascript" src="site/assets/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="site/assets/scripts/module.js"></script>
+    <script type="text/javascript" src="site/assets/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="site/assets/scripts/uploader.js"></script>
+    <script type="text/javascript" src="site/assets/scripts/simditor.js"></script>
+</head>
+<body>
+    <textarea id="editor" placeholder="Balabala" autofocus></textarea>
+</body>
+</html>
+<script>
+    var editor = new Simditor({
+        textarea: $('#editor'),
+        upload : "true"
+        //optional options
+    });
+</script>
