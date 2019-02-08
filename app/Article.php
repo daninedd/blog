@@ -17,15 +17,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $body 文章类容
  * @property string $tags 文章标签
  * @property int $private 文章类容
- * @property int $categories_id 分类id
  * @property int $stat 0:草稿,1:发布
  * @property int $click_times 点击次数
  * @property string|null $publish_time 发布时间
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property string|null $deleted_at 软删除时间
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Category[] $categories
+ * @property-read \App\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Article whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Article whereCategoriesId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Article whereClickTimes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Article whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Article whereDeletedAt($value)
@@ -48,4 +48,22 @@ class Article extends Model
     protected function setUserIdAttribute(){
        $this->attributes['user_id'] =  Admin::user()->id;
     }
+
+
+    /**
+     * 关联用户
+    */
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+
+    /**
+     * 关联分类
+    */
+    public function categories(){
+        return $this->belongsToMany(Category::class, 'article_map_category', 'article_id', 'category_id');
+    }
+
+
 }

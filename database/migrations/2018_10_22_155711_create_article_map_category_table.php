@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCategoryTable extends Migration
+class CreateArticleMapCategoryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateCategoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('category', function (Blueprint $table) {
+        Schema::create('article_map_category', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 255)->charset('utf8')->comment("分类名称");
-            $table->unsignedInteger('user_id')->comment("创建该分类的用户id");
+            $table->unsignedInteger('article_id')->comment("文章id");
+            $table->unsignedInteger('category_id')->comment("分类id");
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateCategoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('category');
+        Schema::dropIfExists('article_map_category');
     }
 }

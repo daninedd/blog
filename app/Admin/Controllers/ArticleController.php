@@ -5,20 +5,35 @@ namespace App\Admin\Controllers;
 use App\Article;
 use App\Category;
 
+use App\User;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\ModelForm;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\MessageBag;
+use App\Admin\Validate as validate;
 
 class ArticleController extends Controller
 {
     use ModelForm;
+
+    protected $admin_id;
+
+
+
+/*    public function __construct()
+    {
+        if(!Admin::user()){
+            redirect('admin/Auth/login');
+        };
+        $this->admin_id = Admin::user()->id;
+    }*/
 
     /**
      * Index interface.
@@ -100,21 +115,18 @@ class ArticleController extends Controller
     {
 
         $user_id = Admin::user()->id;
-        $categorys = Category::whereUserId($user_id)->orderBy('created_at')->get(['id','name']);
-        $category = [];
-        foreach($categorys as $value){
-            $category[$value->id] = $value->name;
-        }
-        return Admin::form(Article::class, function (Form $form) use ($category, $user_id) {
+        $categorys = Category::whereUserId($user_id)->orderBy('created_at')->get(['id','name'])->toArray();
+        $categorys = array_column($categorys, 'name');
+        return Admin::form(Article::class, function (Form $form) use ($categorys) {
             $form->text('first_title', '一级标题')->rules('required');
             $form->text('second_title', '二级标题')->rules('required');
             $form->text('description', '文章描述')->rules('required');
             $form->image('img', '主图')->rules('required');
-            $form->checkbox('categories_id', '分类')->options($category);
+            $form->tags('categories','分类')->options($categorys);
             $form->simditor('body', '文章内容');
-            $form->tags('tags', '标签');
-            $form->radio('private', '私有')->options(['0' => '私有', '1'=> '公开'])->default('0');
-            $form->radio('stat', '草稿')->options(['0' => '保存为草稿', '1'=> '发布'])->default('0');
+            $form->tags('tags', '标签')->rules('required');
+            $form->radio('private', '私有')->options(['0' => '私有', '1'=> '公开'])->default('0')->rules('required');
+            $form->radio('stat', '草稿')->options(['0' => '保存为草稿', '1'=> '发布'])->default('0')->rules('required');
             $form->hidden('user_id',time())->rules('required')->default(time());
         });
     }
@@ -123,27 +135,18 @@ class ArticleController extends Controller
     /**
      * insert an article
     */
-    public function store(Request $request){
+    public function store(Request $request, Article $article){
+        //验证数据
+        $user_id = Admin::user()->id;
+        $this->validate($request, validate\Article::$rules, [], validate\Article::$nicename);
 
-
-        $data = Request::all();
-        $rules = [
-            'first_title' => 'required|string|max:30',
-            'second_title' => 'required|max:100',
-            'description' => 'required',
-            'img' => 'required',
-            'categories_id' => 'required|array|string',
-            'private' => 'in:0,1',
-            'stat' => 'in:0,1',
-            'user_id' => 'required|integer',
-        ];
-        $validator = \Validator::make($data, $rules);
-        if($validator->fails()){
-            $messageBag = new MessageBag();
-            $messageBag = $messageBag->merge($validator->messages());
-            return back()->withInput()->withErrors($messageBag);
+        $article->guard([]);
+        $article->save($request->all());
+        foreach($request->get('categories') as $value){
+            if(!$value) continue;
+            $category = Category::firstOrCreate(['name' => $value, 'user_id' => $user_id]);
+            $category = 1;
         }
-
     }
 
 }
